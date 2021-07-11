@@ -50,11 +50,14 @@ public class CombatLoop implements Runnable {
 
         // Give Combatants cards & energy
         for (Combatant c : parentInstance.getCombatants()) {
-            c.decreaseStatusesTTL();
-            c.drawRoundCards();
-            if(parentInstance.getCombatRound()==1) c.drawRoundCards();
-            c.gainRoundEnergy();
-            if(parentInstance.getCombatRound()>1) c.regenerate();
+            if(!c.isDead()) {
+                c.decreaseStatusesTTL();
+                c.drawRoundCards();
+                if(parentInstance.getCombatRound()==1) c.drawRoundCards();
+                c.gainRoundEnergy();
+                if(parentInstance.getCombatRound()>1) c.regenerate();
+            }
+
         }
         // Delay
         try {
@@ -129,7 +132,7 @@ public class CombatLoop implements Runnable {
             // ToDo: TimeOut mechanism
             allPassed = true;
             for(Combatant combatant : parentInstance.getCombatantByFaction(Faction.Players)) {
-                allPassed = allPassed && combatant.hasPassed();
+                if(!combatant.isDead()) allPassed = allPassed && combatant.hasPassed();
             }
         }
         // End subround
