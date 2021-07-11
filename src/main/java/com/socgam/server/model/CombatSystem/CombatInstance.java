@@ -178,7 +178,7 @@ public class CombatInstance {
         if(lastKnownSequenceNumber < getLastSequence()) {
             synchronized (combatSnapshots) {
                 if(combatSnapshots.size() > lastKnownSequenceNumber+1)
-                    c = Optional.of(combatSnapshots.get(lastKnownSequenceNumber+1));
+                    c = Optional.of(combatSnapshots.get(combatSnapshots.size()-1));
             }
         }
         return c;
