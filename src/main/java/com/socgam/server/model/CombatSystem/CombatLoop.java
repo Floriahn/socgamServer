@@ -82,8 +82,8 @@ public class CombatLoop implements Runnable {
                 Optional<Card> c = SimpleAI.cardToPlay(combatant);
                 // ToDo: Choose target somehow (at the moment just targets first player
                 if(c.isPresent()) {
-                    Combatant target = SimpleAI.chooseTarget(c.get(), parentInstance, combatant);
-                    c.get().addMainTarget(target);
+                    Optional<Combatant> target = SimpleAI.chooseTarget(c.get(), parentInstance, combatant);
+                    c.get().addMainTarget(target.get());
                     c.get().playCard(parentInstance, combatant);
                 } else {
                     combatant.pass(true);

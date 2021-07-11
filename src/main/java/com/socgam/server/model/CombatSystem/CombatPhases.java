@@ -4,5 +4,19 @@ public enum CombatPhases {
     ROUNDSTART,
     ENEMYPHASE,
     PLAYERPHASE,
-    ROUNDEND
+    ROUNDEND;
+
+    @Override
+    public String toString() {
+        switch (this) {
+            case ROUNDSTART:
+                return "Rundenbeginn";
+            case ENEMYPHASE:
+                return "Gegnerphase";
+            case PLAYERPHASE:
+                return "Spielerphase";
+            default:
+                return "";
+        }
+    }
 }

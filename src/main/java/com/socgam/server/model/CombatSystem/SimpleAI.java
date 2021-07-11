@@ -20,18 +20,19 @@ public class SimpleAI {
         return c;
     }
 
-    public static Combatant chooseTarget(Card card, CombatInstance instance, Combatant self) {
+    public static Optional<Combatant> chooseTarget(Card card, CombatInstance instance, Combatant self) {
         switch(card.getCardTargetClass()){
             case Self:
             case AllCombatants:
             case Ally:
             case AllAllies:
-                return self;
+                return Optional.of(self);
             case Enemy:
             case AllEnemies:
-                return instance.getCombatantByFaction(Faction.Players).get(0);
+                Optional<Combatant> target = instance.getCombatantByFaction(Faction.Players).stream().filter(c -> !c.isDead()).findAny();
+                return target;
             default:
-                return self;
+                return Optional.of(self);
         }
     }
 }
