@@ -15,10 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -35,7 +32,12 @@ public class CardController {
 
     @GetMapping("card/getCard/{id}")
     public CardDatabase getCard(@PathVariable String id){
-        CardDatabase cd = cardDatabaseRepository.findById(id).get();
+        Optional<CardDatabase> optional = cardDatabaseRepository.findById(id);
+        if(optional.isEmpty()){
+            System.out.println(id + " aaa");
+            return null;
+        }
+        CardDatabase cd = optional.get();
         List<EffectDatabase> effects = (List<EffectDatabase>) Arrays.stream(cd.getEffects().split(",")).map(effectString -> getEffectbyId(effectString)).collect(Collectors.toList());
         cd.setEffectsList(effects);
 
@@ -113,12 +115,25 @@ public class CardController {
         return new CardDatabaseList(cardDatabaseRepository.findAll());
     }
 
-    @PostMapping("trade/makeOffer/{userId}/{toId}/{cardId}")
-    public void makeOffer(@PathVariable String cardId, @PathVariable String toId, @PathVariable String userId){
-        User u = userRepository.findById(cardId).get();
+
+    @GetMapping("card/getRandomCard")
+    public CardDatabase getRandomCard(){
+        List<CardDatabase> cards = cardDatabaseRepository.findAll();
+        Random rand = new Random();
+        while (true){
+            CardDatabase cd = cards.get(rand.nextInt(cards.size()));
+            if(cd.getSubtype() != null && cd.getSubtype().equals("player")){
+                return cd;
+            }
+        }
+    }
+
+    @PostMapping("trade/makeOffer/{fromId}/{toId}/{fromCardId}/{toCardId}")
+    public void makeOffer(@PathVariable String fromId, @PathVariable String toId, @PathVariable String fromCardId, @PathVariable String toCardId){
+        User u = userRepository.findById(fromId).get();
         User to = userRepository.findById(toId).get();
 
-        TradeOffer offer = new TradeOffer(userId, toId, cardId, "");
+        TradeOffer offer = new TradeOffer(fromId, toId, fromCardId, toCardId);
 
         u.setTradeOffers(offer);
         to.setTradeOffers(offer);
@@ -131,7 +146,7 @@ public class CardController {
     public void answerOffer(@PathVariable String cardId, @PathVariable String userId){
         User u = userRepository.findById(userId).get();
         TradeOffer offer = u.getTradeOffers();
-        User offerer = userRepository.findById(offer.getCardFromId()).get();
+        User offerer = userRepository.findById(offer.getFromId()).get();
         offer.setCardToId(cardId);
         u.setTradeOffers(offer);
         offerer.setTradeOffers(offer);
@@ -145,7 +160,6 @@ public class CardController {
         TradeOffer offer = u.getTradeOffers();
         User offerer = userRepository.findById(offer.getCardFromId()).get();
 
-        //ToDo karten auch aus decks entfernen?
         u.getCardCollection().remove(offer.getCardFromId());
         u.getCardCollection().add(offer.getCardToId());
         offerer.getCardCollection().remove(offer.getCardToId());
@@ -153,7 +167,6 @@ public class CardController {
 
         u.setTradeState(2);
         offerer.setTradeState(2);
-
 
         userRepository.save(u);
         userRepository.save(offerer);
@@ -163,8 +176,13 @@ public class CardController {
     public void cancelOffer(@PathVariable String userId){
         User u = userRepository.findById(userId).get();
         TradeOffer offer = u.getTradeOffers();
-        User offerer = userRepository.findById(offer.getCardFromId()).get();
-
+        Optional<User> optional = userRepository.findById(offer.getFromId());
+        if(optional.isEmpty()){
+            System.out.println(userId);
+            System.out.println(offer.getFromId());
+            return;
+        }
+        User offerer = optional.get();
         u.setTradeState(1);
         offerer.setTradeState(1);
 

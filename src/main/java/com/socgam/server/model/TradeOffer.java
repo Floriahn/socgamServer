@@ -4,14 +4,14 @@ public class TradeOffer {
 
     private String fromId;
     private String toId;
-    private String CardFromId;
-    private String CardToId;
+    private String cardFromId;
+    private String cardToId;
 
-    public TradeOffer(String from, String to, String cardFromId, String cardToId) {
-        this.fromId = from;
-        this.toId = to;
-        CardFromId = cardFromId;
-        CardToId = cardToId;
+    public TradeOffer(String fromId, String toId, String cardFromId, String cardToId) {
+        this.fromId = fromId;
+        this.toId = toId;
+        this.cardFromId = cardFromId;
+        this.cardToId = cardToId;
     }
 
     public String getFromId() {
@@ -22,27 +22,27 @@ public class TradeOffer {
         this.fromId = fromId;
     }
 
-    public String getTo() {
+    public String getToId() {
         return toId;
     }
 
-    public void setTo(String to) {
-        this.toId = to;
+    public void setToId(String toId) {
+        this.toId = toId;
     }
 
     public String getCardFromId() {
-        return CardFromId;
+        return cardFromId;
     }
 
     public void setCardFromId(String cardFromId) {
-        CardFromId = cardFromId;
+        this.cardFromId = cardFromId;
     }
 
     public String getCardToId() {
-        return CardToId;
+        return cardToId;
     }
 
     public void setCardToId(String cardToId) {
-        CardToId = cardToId;
+        this.cardToId = cardToId;
     }
 }
