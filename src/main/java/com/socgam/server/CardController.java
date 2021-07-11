@@ -116,13 +116,16 @@ public class CardController {
     }
 
 
-    @GetMapping("card/getRandomCard")
-    public CardDatabase getRandomCard(){
+    @GetMapping("card/getRandomCard/{id}")
+    public CardDatabase getRandomCard(@PathVariable String id){
         List<CardDatabase> cards = cardDatabaseRepository.findAll();
         Random rand = new Random();
         while (true){
             CardDatabase cd = cards.get(rand.nextInt(cards.size()));
             if(cd.getSubtype() != null && cd.getSubtype().equals("player")){
+                User u = userRepository.findById(id).get();
+                u.getCardCollection().add(cd.getCardID());
+                userRepository.save(u);
                 return cd;
             }
         }
@@ -146,7 +149,7 @@ public class CardController {
     public void answerOffer(@PathVariable String cardId, @PathVariable String userId){
         User u = userRepository.findById(userId).get();
         TradeOffer offer = u.getTradeOffers();
-        User offerer = userRepository.findById(offer.getFromId()).get();
+        User offerer = userRepository.findById(offer.getCardFromId()).get();
         offer.setCardToId(cardId);
         u.setTradeOffers(offer);
         offerer.setTradeOffers(offer);
@@ -158,7 +161,7 @@ public class CardController {
     public void confirmOffer(@PathVariable String userId){
         User u = userRepository.findById(userId).get();
         TradeOffer offer = u.getTradeOffers();
-        User offerer = userRepository.findById(offer.getCardFromId()).get();
+        User offerer = userRepository.findById(offer.getFromId()).get();
 
         u.getCardCollection().remove(offer.getCardFromId());
         u.getCardCollection().add(offer.getCardToId());

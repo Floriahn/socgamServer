@@ -36,7 +36,7 @@ public class CombatantSnapshot {
         isDead = combatant.isDead();
         handCards = new LinkedList<>();
         for (Card handcard : combatant.getHandCards()) {
-            handCards.add(handcard.getID());
+            if(!(handcard==null)) handCards.add(handcard.getID());
         }
     }
 

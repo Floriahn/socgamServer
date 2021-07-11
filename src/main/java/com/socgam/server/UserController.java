@@ -233,6 +233,13 @@ public class UserController {
         return new UserList(userRepository.findAll());
     }
 
+    @PostMapping("user/resetFightID/{id}")
+    public void resetFightID(@PathVariable String id){
+        User u = userRepository.findById(id).get();
+        u.setActiveFightId(null);
+        userRepository.save(u);
+    }
+
     private double distance(double lat1, double lat2, double lon1, double lon2) {
         //https://www.geeksforgeeks.org/program-distance-two-points-earth/
         // The math module contains a function

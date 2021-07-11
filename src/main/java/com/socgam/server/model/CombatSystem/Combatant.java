@@ -238,11 +238,9 @@ public class Combatant {
     }
 
     private void resetDrawDeck() {
-        synchronized (lock) {
-            drawDeck = discardPile;
-            discardPile = new LinkedList<>();
-            shuffleDrawDeck();
-        }
+        drawDeck.addAll(discardPile);
+        discardPile.clear();
+        shuffleDrawDeck();
     }
 
     private void shuffleDrawDeck() {
